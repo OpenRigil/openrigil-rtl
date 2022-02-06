@@ -1,3 +1,21 @@
+# RTL
+## Introduction
+This the mono-repo for OpenRigil RTL for FPGA prototype and ASIC designs, it will include:
+1. Rocket-based CPU
+2. RISC-V Crypto Extension
+3. MMM ISA Extension
+4. SoC designs
+
+## Project Management
+It will depend on https://github.com/sequencer/playground for keep updating with upstream dependency. When playground updates, this project should be totally rebased to that. After development, it will be rebase out from playground as a standalone project.  
+`RocketCore` will be forked out to `RigilCore` in `rigil` directory.  
+It will depend on `diplomacy` SoC framework and TileLink interconnection protocol before TileLink landing to its own repository.
+Some other RTL(USB, DDR Controller) will be incubated inside this project as well, and finally being split to their own project to chipsalliance.  
+Physical Design is also included but won't be open sourced.  
+
+# Below are playground template
+DONT MODIFY! UNLESS YOU WANT TO HANDLE CONFLICT EVERYDAY!
+
 # playground
 
 ## Introduction
