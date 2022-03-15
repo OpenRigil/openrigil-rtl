@@ -24,8 +24,8 @@
 	branch = master
 [submodule "rocket-chip"]
 	path = dependencies/rocket-chip
-	url = git@github.com:chipsalliance/rocket-chip.git
-	branch = master
+	url = git@github.com:OpenRigil/rocket-chip.git
+	branch = Zk-chisel
 [submodule "sifive-blocks"]
 	path = dependencies/sifive-blocks
 	url = git@github.com:sifive/sifive-blocks.git
