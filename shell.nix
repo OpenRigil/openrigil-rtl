@@ -1,4 +1,4 @@
-with import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/41b500b737e0ee3d9bfb4e0175d7d3bc88c59111.tar.gz") {
+with import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/b3adce1542df29dd5a35077a3d42bcc47100e74e.tar.gz") {
   config = {
     packageOverrides = pkgs: with pkgs; {
       llvmPackages = llvmPackages_14;
