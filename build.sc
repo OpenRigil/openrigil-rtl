@@ -394,7 +394,8 @@ object spike extends Module {
   // ask make to cache file.
   def compile = T.persistent {
     if (!helper.isMac) {
-      os.proc(millSourcePath / "configure", "--prefix", "/usr", "--without-boost", "--without-boost-asio", "--without-boost-regex").call(
+      os.proc(millSourcePath / "configure", "--prefix", "/usr", "--without-boost", "--without-boost-asio", "--without-boost-regex",
+        "--with-isa=RV64IMAFDCV_zk_zknd_zkne").call(
         T.ctx.dest, Map(
           "CC" -> "clang",
           "CXX" -> "clang++",
