@@ -22,8 +22,8 @@ object VerilatorTest extends TestSuite {
         //classOf[freechips.rocketchip.subsystem.WithCryptoNIST],
         //classOf[freechips.rocketchip.subsystem.WithCryptoSM],
         //classOf[freechips.rocketchip.system.MontgomeryTLConfig])
-        //classOf[freechips.rocketchip.system.DefaultConfig])
-        classOf[freechips.rocketchip.system.TinyConfig])
+        classOf[freechips.rocketchip.system.DefaultConfig])
+        //classOf[freechips.rocketchip.system.TinyConfig])
         //classOf[freechips.rocketchip.system.DefaultRV32Config])
       val emulator = TestHarness(testHarness, configs, Some(outputDirectory)).emulator
       test("build hello") {

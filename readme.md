@@ -21,7 +21,7 @@ DONT MODIFY! UNLESS YOU WANT TO HANDLE CONFLICT EVERYDAY!
 ## Introduction
 This is a template repository for those who want to develop RTL based on rocket-chip and even chipyard, being able to edit all sources from chisel environments without publish them to local ivy.
 You can add your own submodule in `build.sc`.  
-For more information please visit [mill documentation](https://com-lihaoyi.github.io/mill/page/configuring-mill.html)
+For more information please visit [Mill documentation](https://com-lihaoyi.github.io/mill/mill/Intro_to_Mill.html)
 after adding your own code, you can add your library to playground dependency, and re-index Intellij to add your own library.
 
 ## Quick Start
@@ -35,7 +35,7 @@ git clone git@github.com:sequencer/playground.git
 ```
 
 0. Install dependencies and setup environments:
-- Arch Linux `pacman -Syu --noconfirm make parallel wget cmake ninja mill dtc verilator git llvm clang lld protobuf antlr4`
+- Arch Linux `pacman -Syu --noconfirm make parallel wget cmake ninja mill dtc verilator git llvm clang lld protobuf antlr4 numactl`
 - Nix `nix-shell`
 
 0. [Optional] Remove unused dependences to accelerate bsp compile in `build.sc` `playground.moduleDeps`;
@@ -96,14 +96,21 @@ then open by your favorite IDE, which supports [BSP](https://build-server-protoc
 Philosophy of this repository is **fast break and fast fix**.
 This repository always tracks remote developing branches, it may need some patches to work, `make patch` will append below in sequence:
 <!-- BEGIN-PATCH -->
-rocket-chip https://github.com/chipsalliance/rocket-chip/pull/2810  
-fpga-shells https://github.com/sifive/fpga-shells/pull/161  
-fpga-shells https://github.com/sifive/fpga-shells/pull/162  
+cva6-wrapper https://github.com/ucb-bar/cva6-wrapper/pull/15  
+chipyard https://github.com/ucb-bar/chipyard/pull/1160  
+dsptools https://github.com/ucb-bar/dsptools/pull/240  
+riscv-sodor https://github.com/ucb-bar/riscv-sodor/pull/72  
+riscv-boom https://github.com/riscv-boom/riscv-boom/pull/600  
+riscv-boom https://github.com/riscv-boom/riscv-boom/pull/601  
+rocket-chip https://github.com/chipsalliance/rocket-chip/pull/2968  
+rocket-chip-blocks https://github.com/chipsalliance/rocket-chip-blocks/pull/1  
+rocket-chip-blocks https://github.com/chipsalliance/rocket-chip-blocks/pull/2  
+rocket-chip-blocks https://github.com/chipsalliance/rocket-chip-blocks/pull/3  
+rocket-chip-fpga-shells https://github.com/chipsalliance/rocket-chip-fpga-shells/pull/1  
+rocket-chip-fpga-shells https://github.com/chipsalliance/rocket-chip-fpga-shells/pull/2  
+rocket-chip-fpga-shells https://github.com/chipsalliance/rocket-chip-fpga-shells/pull/3  
+rocket-chip-inclusive-cache https://github.com/chipsalliance/rocket-chip-inclusive-cache/pull/2  
 rocket-dsp-utils https://github.com/ucb-bar/rocket-dsp-utils/pull/6  
-sha3 https://github.com/ucb-bar/sha3/pull/33  
-dsptools https://github.com/ucb-bar/dsptools/pull/240      
-riscv-pk https://github.com/riscv-software-src/riscv-pk/pull/263  
-riscv-pk https://github.com/riscv-software-src/riscv-pk/pull/264  
 <!-- END-PATCH -->
 
 ## Why not Chipyard
@@ -153,7 +160,7 @@ This package is the standalone tests to check is bumping correct or not, served 
 * lld: LLVM based linker
   - Arch Linux: lld
 * verilator -> Verilog -> C++ generation
-  - Arch Linux: verilator
+  - Arch Linux: verilator numactl
 * cmake -> verilator emulator build system
   - Arch Linux: cmake
 * ninja -> verilator emulator build system
