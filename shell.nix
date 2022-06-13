@@ -1,11 +1,11 @@
 with import <nixpkgs> {
   config = {
     packageOverrides = pkgs: with pkgs; {
-      llvmPackages = llvmPackages_13;
-      clang = clang_13;
-      lld = lld_13;
-      jdk = if stdenv.isDarwin then jdk11_headless else graalvm11-ce;
-      protobuf = protobuf3_15; # required by firrtl
+      llvmPackages = llvmPackages_14;
+      clang = clang_14;
+      lld = lld_14;
+      jdk = graalvm11-ce;
+      #protobuf = protobuf3_15; # required by firrtl
       python = python3Full;
     };
   };
