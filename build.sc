@@ -440,7 +440,7 @@ object spike extends Module {
   def compile = T.persistent {
     if (!helper.isMac) {
       os.proc(millSourcePath / "configure", "--prefix", "/usr", "--without-boost", "--without-boost-asio", "--without-boost-regex",
-        "--with-isa=RV64IMAFDCV_zk_zknd_zkne").call(
+        "--with-isa=RV32IMAFDCV_zk_zknd_zkne").call(
         T.ctx.dest, Map(
           "CC" -> "clang",
           "CXX" -> "clang++",

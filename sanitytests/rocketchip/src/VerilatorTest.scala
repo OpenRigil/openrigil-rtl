@@ -16,13 +16,15 @@ object VerilatorTest extends TestSuite {
   val tests = Tests {
     test("build TestHarness emulator") {
       val testHarness = classOf[freechips.rocketchip.system.TestHarness]
-      val configs = Seq(classOf[TestConfig],
+      val configs = Seq(
         //classOf[freechips.rocketchip.subsystem.WithBitManip],
         //classOf[freechips.rocketchip.subsystem.WithBitManipCrypto],
         //classOf[freechips.rocketchip.subsystem.WithCryptoNIST],
         //classOf[freechips.rocketchip.subsystem.WithCryptoSM],
-        //classOf[freechips.rocketchip.system.MontgomeryTLConfig])
-        classOf[freechips.rocketchip.system.DefaultConfig])
+        classOf[TestConfig],
+        classOf[freechips.rocketchip.system.USBConfig])
+        //classOf[freechips.rocketchip.system.DefaultConfig])
+        //classOf[freechips.rocketchip.system.MyConfig])
         //classOf[freechips.rocketchip.system.TinyConfig])
         //classOf[freechips.rocketchip.system.DefaultRV32Config])
       val emulator = TestHarness(testHarness, configs, Some(outputDirectory)).emulator

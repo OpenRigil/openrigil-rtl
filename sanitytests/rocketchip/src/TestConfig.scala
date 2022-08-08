@@ -1,7 +1,8 @@
 package sanitytests.rocketchip
 
 import chipsalliance.rocketchip.config.Config
-import freechips.rocketchip.devices.tilelink.BootROMLocated
+import freechips.rocketchip.devices.tilelink.{BootROMLocated, MaskROMLocated, MaskROMParams}
+import freechips.rocketchip.subsystem.InSubsystem
 import freechips.rocketchip.util.ClockGateModelFile
 import os._
 
@@ -41,5 +42,8 @@ class TestConfig
           ).call()
           // format: on
           img.toString()
-        }))
+        //}))
+        //  s"${resource("uart.bin")}"
+        }, hang = 0x10000))
+      case MaskROMLocated(InSubsystem) => Seq(MaskROMParams(address = 0x100000, name="usbbootrom", depth=256 * 1024 / 4, width=32))
     })
