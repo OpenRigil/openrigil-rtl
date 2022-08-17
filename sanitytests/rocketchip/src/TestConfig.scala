@@ -45,5 +45,5 @@ class TestConfig
         //}))
         //  s"${resource("uart.bin")}"
         }, hang = 0x10000))
-      case MaskROMLocated(InSubsystem) => Seq(MaskROMParams(address = 0x100000, name="usbbootrom", depth=256 * 1024 / 4, width=32))
+      case MaskROMLocated(InSubsystem) => Seq(MaskROMParams(address = 0x100000, name="usbbootrom", depth=288 * 1024 / 4, width=32))
     })

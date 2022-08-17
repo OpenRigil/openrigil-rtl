@@ -4,11 +4,11 @@ module usbbootrom(
   input clock,
   input oe,
   input me,
-  input [15:0] address,
+  input [16:0] address,
   output [31:0] q
 );
   reg [31:0] out;
-  reg [31:0] rom [0:65535];
+  reg [31:0] rom [0:73727];
 
 
   initial begin: init_and_load
@@ -17,14 +17,14 @@ module usbbootrom(
     reg [255*8-1:0] path;
 `ifdef RANDOMIZE
   `ifdef RANDOMIZE_MEM_INIT
-    for (i = 0; i < 65536; i = i + 1) begin
+    for (i = 0; i < 73728; i = i + 1) begin
       rom[i] = {1{$random}};
     end
   `endif
 `endif
     //if (!$value$plusargs("maskromhex=%s", path)) begin
     //end
-    path = "/run/user/2015/T/openrigil-usb/build/usbbootrom.hex";
+    path = "/scorpio/home/zhenghongren/T/souchong-3/openrigil-usb-fixed/build/usbbootrom.hex";
     $readmemh(path, rom);
   end : init_and_load
 
