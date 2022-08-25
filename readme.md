@@ -37,11 +37,11 @@ Then you could find the emulator in `out/VerilatorTest/build/emulator`. You coul
 
 ## FPGA
 
-Now you can find the generated verilog in `out/VerilatorTest/` and you can import them in your EDA. Also Remember to import the `usbbootrom.rom.v` and corresponding `openrigil.hex`.
+Now you can find the generated verilog in `out/VerilatorTest/` and you can import them to your EDA. Also Remember to import the `usbbootrom.rom.v` and corresponding `openrigil.hex`.
 
-For Vivado, we have some reference design files in `vivado/`. Note that you should generate a 60MHz clock in block design and connect that to the clk pin for `truetop`. You can change it to other frequencies in `sanitytests/rocketchip/src/OpenRigil.scala` but it must be multiples of 12MHz and at least 48MHz is recommended (otherwise USB may not function well, we have not tested it yet.)
+For Vivado, we have some reference design files in `vivado/`. Note that you should generate a 60MHz clock in block design and connect that to the clk pin of `truetop`. You can change it to other frequencies in `sanitytests/rocketchip/src/OpenRigil.scala` but it must be multiples of 12MHz and at least 48MHz is recommended (otherwise USB may not function well, we have not tested it yet.)
 
-The constraint file is for for Arty A7-100T. You may also use it for Arty A7-35T. Note that USB traffic are carried through GPIO pins with pullup. You should prepare a dupont to USB Type-A board.
+The constraint file is for Arty A7-100T. You may also use it for Arty A7-35T. Note that USB traffic are carried through GPIO pins with pullup. You should also prepare a dupont to USB Type-A board.
 
 ## Disclaimer
 
