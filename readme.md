@@ -1,11 +1,14 @@
-# RTL
+# openrigil-rtl
 
 ## Introduction
 
+OpenRigil is an open-source RISC-V cryptographic hardware token. It could be used with your OpenPGP/PIV/FIDO2 applications.
+
 This the mono-repo for OpenRigil RTL for FPGA prototype, it will include:
+
 1. Rocket-based CPU
 2. RISC-V Crypto Extension
-3. MMM Accelerator
+3. Montgomery Accelerator for RSA4096/Ed25519
 4. USB 1.1 FS device
 5. SoC designs
 
@@ -34,11 +37,15 @@ Then you could find the emulator in `out/VerilatorTest/build/emulator`. You coul
 
 ## FPGA
 
-Now you can find the generated verilog in `out/VerilatorTest/` and you can import then in your EDA. Also Remember to import the `usbbootrom.rom.v` and corresponding `openrigil.hex`.
+Now you can find the generated verilog in `out/VerilatorTest/` and you can import them in your EDA. Also Remember to import the `usbbootrom.rom.v` and corresponding `openrigil.hex`.
 
-For Vivado, we have some reference design files in `vivado/`. Note that you should generate a 60MHz clock in block design and connect that to the clk pin for `truetop`. You can change it to other frequencies in `sanitytests/rocketchip/src/OpenRigil.scala` but it must be multiple of 12MHz and at least 48MHz is recommended (otherwise USB may not function well, we have not tested it yet.)
+For Vivado, we have some reference design files in `vivado/`. Note that you should generate a 60MHz clock in block design and connect that to the clk pin for `truetop`. You can change it to other frequencies in `sanitytests/rocketchip/src/OpenRigil.scala` but it must be multiples of 12MHz and at least 48MHz is recommended (otherwise USB may not function well, we have not tested it yet.)
 
 The constraint file is for for Arty A7-100T. You may also use it for Arty A7-35T. Note that USB traffic are carried through GPIO pins with pullup. You should prepare a dupont to USB Type-A board.
+
+## Disclaimer
+
+There is still a long way to go to build a fully secure cryptographic hardware token. Now this could only be used for testing and playing. Do not use it in production!
 
 ## Project Management
 It will depend on https://github.com/sequencer/playground for keep updating with upstream dependency. When playground updates, this project should be totally rebased to that. After development, it will be rebase out from playground as a standalone project.  
