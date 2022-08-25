@@ -22,7 +22,7 @@
 	branch = Zk-chisel
 [submodule "rocket-chip-blocks"]
 	path = dependencies/rocket-chip-blocks
-	url = git@github.com:chipsalliance/rocket-chip-blocks.git
+	url = git@github.com:OpenRigil/rocket-chip-blocks.git
 [submodule "rocket-chip-inclusive-cache"]
 	path = dependencies/rocket-chip-inclusive-cache
 	url = git@github.com:chipsalliance/rocket-chip-inclusive-cache.git

@@ -22,7 +22,7 @@ module usbbootrom(
     end
   `endif
 `endif
-    path = "/path/to/usbbootrom.hex";
+    path = "/path/to/openrigil.hex";
     $readmemh(path, rom);
   end : init_and_load
 

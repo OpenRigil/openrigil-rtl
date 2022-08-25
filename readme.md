@@ -1,10 +1,44 @@
 # RTL
+
 ## Introduction
-This the mono-repo for OpenRigil RTL for FPGA prototype and ASIC designs, it will include:
+
+This the mono-repo for OpenRigil RTL for FPGA prototype, it will include:
 1. Rocket-based CPU
 2. RISC-V Crypto Extension
-3. MMM ISA Extension
-4. SoC designs
+3. MMM Accelerator
+4. USB 1.1 FS device
+5. SoC designs
+
+## Build the emulator
+
+First you should follow the `Quick Start` section in playground, or more specifically, only these two steps are necessary.
+```
+make init # init submodules, only a few of them are necessary though.
+make patch
+```
+
+Then you should build the firmware in [openrigil-firmware](https://github.com/OpenRigil/openrigil-firmware)
+
+Now you should change the `/path/to/openrigil.hex` in `sanitytests/rocketchip/resources/vsrc/usbbootrom.rom.v` to your built `openrigil.hex`
+
+After setting up environments/tools like mill/dtc/clang (see Arch/Nix guide below), you can run the following command to build the emulator.
+```
+make test
+```
+
+Then you could find the emulator in `out/VerilatorTest/build/emulator`. You could emulate for a while to see if the firmware was loaded or not.
+
+```
+./out/VerilatorTest/build/emulator +verbose /dev/null
+```
+
+## FPGA
+
+Now you can find the generated verilog in `out/VerilatorTest/` and you can import then in your EDA. Also Remember to import the `usbbootrom.rom.v` and corresponding `openrigil.hex`.
+
+For Vivado, we have some reference design files in `vivado/`. Note that you should generate a 60MHz clock in block design and connect that to the clk pin for `truetop`. You can change it to other frequencies in `sanitytests/rocketchip/src/OpenRigil.scala` but it must be multiple of 12MHz and at least 48MHz is recommended (otherwise USB may not function well, we have not tested it yet.)
+
+The constraint file is for for Arty A7-100T. You may also use it for Arty A7-35T. Note that USB traffic are carried through GPIO pins with pullup. You should prepare a dupont to USB Type-A board.
 
 ## Project Management
 It will depend on https://github.com/sequencer/playground for keep updating with upstream dependency. When playground updates, this project should be totally rebased to that. After development, it will be rebase out from playground as a standalone project.  
