@@ -1,4 +1,4 @@
-// This file created by /run/user/2015/T/rtl/dependencies/rocket-chip/scripts/vlsi_rom_gen
+// This file created by rocket-chip/scripts/vlsi_rom_gen
 
 module usbbootrom(
   input clock,
@@ -22,9 +22,7 @@ module usbbootrom(
     end
   `endif
 `endif
-    //if (!$value$plusargs("maskromhex=%s", path)) begin
-    //end
-    path = "/scorpio/home/zhenghongren/T/souchong-3/openrigil-usb-fixed/build/usbbootrom.hex";
+    path = "/path/to/usbbootrom.hex";
     $readmemh(path, rom);
   end : init_and_load
 
@@ -38,4 +36,3 @@ module usbbootrom(
   assign q = oe ? out : 32'bZ;
 
 endmodule
-
