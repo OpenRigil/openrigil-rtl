@@ -410,15 +410,15 @@ object sanitytests extends ScalaModule {
     override def ivyDeps = Agg(
       ivys.utest
     )
-    override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip)
+    override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, blocks)
     def libraryResources = T.sources {
       if (!helper.isMac) {
         val x86Dir = T.ctx.dest
         val riscv64Dir = T.ctx.dest / "riscv64"
         os.proc("make", s"DESTDIR=${x86Dir}", "install").call(spike.compile())
-        os.proc("make", s"DESTDIR=${riscv64Dir}", "install").call(compilerrt.compile())
-        os.proc("make", s"DESTDIR=${riscv64Dir}", "install").call(musl.compile())
-        os.copy.into(pk.compile(), riscv64Dir)
+        //os.proc("make", s"DESTDIR=${riscv64Dir}", "install").call(compilerrt.compile())
+        //os.proc("make", s"DESTDIR=${riscv64Dir}", "install").call(musl.compile())
+        //os.copy.into(pk.compile(), riscv64Dir)
      }
       T.ctx.dest
     }

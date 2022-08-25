@@ -86,7 +86,7 @@ case class TestHarness[M <: RawModule](
          |target_link_libraries(emulator PRIVATE fesvr)
          |verilate(emulator
          |  SOURCES $vsrcs
-         |  TOP_MODULE TestHarness
+         |  TOP_MODULE OpenRigilTestHarness
          |  PREFIX VTestHarness
          |  VERILATOR_ARGS $verilatorArgs
          |)

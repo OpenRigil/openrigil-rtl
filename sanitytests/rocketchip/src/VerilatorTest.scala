@@ -15,45 +15,10 @@ object VerilatorTest extends TestSuite {
   os.makeDir(outputDirectory)
   val tests = Tests {
     test("build TestHarness emulator") {
-      val testHarness = classOf[freechips.rocketchip.system.TestHarness]
+      val testHarness = classOf[openrigil.OpenRigilTestHarness]
       val configs = Seq(
-        //classOf[freechips.rocketchip.subsystem.WithBitManip],
-        //classOf[freechips.rocketchip.subsystem.WithBitManipCrypto],
-        //classOf[freechips.rocketchip.subsystem.WithCryptoNIST],
-        //classOf[freechips.rocketchip.subsystem.WithCryptoSM],
-        classOf[TestConfig],
-        classOf[freechips.rocketchip.system.USBConfig])
-        //classOf[freechips.rocketchip.system.DefaultConfig])
-        //classOf[freechips.rocketchip.system.MyConfig])
-        //classOf[freechips.rocketchip.system.TinyConfig])
-        //classOf[freechips.rocketchip.system.DefaultRV32Config])
+        classOf[openrigil.OpenRigilConfig])
       val emulator = TestHarness(testHarness, configs, Some(outputDirectory)).emulator
-      test("build hello") {
-        os.proc(
-          "clang",
-          "-o", "hello",
-          s"${resource("csrc/hello.c")}",
-          "--target=riscv64",
-          "-mno-relax",
-          "-nostdinc",
-          s"-I${resource("riscv64/usr/include")}",
-          "-fuse-ld=lld",
-          "-nostdlib",
-          s"${resource("riscv64/usr/lib/crt1.o")}",
-          s"${resource("riscv64/usr/lib/crti.o")}",
-          s"${resource("riscv64/usr/lib/riscv64/libclang_rt.builtins-riscv64.a")}",
-          s"${resource("riscv64/usr/lib/libc.a")}",
-          s"${resource("riscv64/usr/lib/crtn.o")}",
-          "-static",
-        ).call(outputDirectory)
-        test("Hello World!") {
-          os.proc(
-            s"$emulator",
-            s"${resource("riscv64/pk")}",
-            "hello",
-          ).call(outputDirectory)
-        }
-      }
     }
   }
 }
