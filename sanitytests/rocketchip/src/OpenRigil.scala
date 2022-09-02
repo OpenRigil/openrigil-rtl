@@ -128,6 +128,7 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   case PeripheryUSBKey => Some(USBParams(baseAddress = 0x5000, txEpNum = 5, sampleRate = Const.frequency / 12000000))
   case PeripheryUARTKey => Seq(UARTParams(address = 0x6000, nTxEntries = 64))
   case PeripherySPIFlashKey => Seq(SPIFlashParams(rAddress = 0x7000, fAddress = 0x60000000))
+  case ExportDebug => DebugAttachParams(protocols = Set(JTAG))
   // Additional device Parameters
   case ClockGateModelFile => Some("/vsrc/EICG_wrapper.v")
   case SubsystemExternalResetVectorKey => false
