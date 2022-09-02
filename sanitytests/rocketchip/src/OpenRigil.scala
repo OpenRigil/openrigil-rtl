@@ -124,23 +124,14 @@ class OpenRigilConfig extends Config ((site, here, up) => {
       // format: on
       img.toString()
     }, hang = 0x10000))
-  case MaskROMLocated(InSubsystem) => Seq(MaskROMParams(address = 0x100000, name="usbbootrom", depth=288 * 1024 / 4, width=32))
   // periphery
   case PeripheryUSBKey => Some(USBParams(baseAddress = 0x5000, txEpNum = 5, sampleRate = Const.frequency / 12000000))
   case PeripheryUARTKey => Seq(UARTParams(address = 0x6000, nTxEntries = 64))
   case PeripherySPIFlashKey => Seq(SPIFlashParams(rAddress = 0x7000, fAddress = 0x60000000))
-  case MontgomeryKey => Some(MontgomeryParams(
-    baseAddress = 0x2000,
-    width = 32,
-    //block = 8, // 8 * 32 = 256, so 256 bit mmm
-    block = 64, // 64 * 32 = 2048, so 2048 bit mmm
-    //block = 128, // 128 * 32 = 4096, so 4096 bit mmm
-    freqDiv = 1,
-    addPipe = 1))
   // Additional device Parameters
   case ClockGateModelFile => Some("/vsrc/EICG_wrapper.v")
   case SubsystemExternalResetVectorKey => false
-  case DebugModuleKey => None // disable debug module for simplicity
+  case DebugModuleKey => Some(DefaultDebugModuleParams(site(XLen)))
   case CLINTKey => Some(CLINTParams())
   case PLICKey => Some(PLICParams())
   case TilesLocated(InSubsystem) => 
@@ -159,7 +150,6 @@ class OpenRigilSystem(implicit p: Parameters) extends RocketSubsystem
     with org.chipsalliance.rocketchip.blocks.devices.usb.CanHavePeripheryUSB
     with sifive.blocks.devices.uart.HasPeripheryUART
     with sifive.blocks.devices.spi.HasPeripherySPIFlash
-    with org.chipsalliance.rocketchip.blocks.devices.montgomery.CanHavePeripheryMontgomery
 {
   // optionally add ROM devices
   // Note that setting BootROMLocated will override the reset_vector for all tiles
@@ -181,8 +171,6 @@ class OpenRigilSystemModuleImp[+L <: OpenRigilSystem](_outer: L) extends RocketS
 class OpenRigilTestHarness()(implicit p: Parameters) extends Module {
   val io = IO(new Bundle {
     val success = Output(Bool())
-    val usb_rx = Input(UInt(2.W))
-    val uart_0_rxd = Input(UInt(1.W))
   })
 
   val ldut = LazyModule(new OpenRigilSystem)
@@ -194,11 +182,12 @@ class OpenRigilTestHarness()(implicit p: Parameters) extends Module {
   dut.dontTouchPorts()
   dut.tieOffInterrupts()
   ldut.l2_frontend_bus_axi4.foreach(_.tieoff)
+  Debug.connectDebug(dut.debug, dut.resetctrl, dut.psd, clock, reset.asBool, io.success)
   io.success := 0.U
 
   dut.usb match {
     case Some(usb) => {
-      usb.rx := io.usb_rx
+      usb.rx := 0.U
       Some(usb)
     }
     case None => None
