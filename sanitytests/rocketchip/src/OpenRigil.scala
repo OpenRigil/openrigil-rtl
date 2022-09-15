@@ -33,6 +33,7 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   // rocket tile
   case RocketTilesKey => List(RocketTileParams(
       core = RocketCoreParams(
+        useCryptoNIST = true,
         useVM = false,
         fpu = None,
         mulDiv = Some(MulDivParams(mulUnroll = 8))),
@@ -128,6 +129,14 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   case PeripheryUARTKey => Seq(UARTParams(address = 0x6000, nTxEntries = 64))
   case PeripherySPIFlashKey => Seq(SPIFlashParams(rAddress = 0x7000, fAddress = 0x60000000))
   case ExportDebug => DebugAttachParams(protocols = Set(JTAG))
+  case MontgomeryKey => Some(MontgomeryParams(
+    baseAddress = 0x2000,
+    width = 32,
+    block = 8, // 8 * 32 = 256, so 256 bit mmm
+    //block = 64, // 64 * 32 = 2048, so 2048 bit mmm
+    //block = 128, // 128 * 32 = 4096, so 4096 bit mmm
+    freqDiv = 1,
+    addPipe = 1))
   // Additional device Parameters
   case ClockGateModelFile => Some("/vsrc/EICG_wrapper.v")
   case SubsystemExternalResetVectorKey => false
@@ -150,6 +159,7 @@ class OpenRigilSystem(implicit p: Parameters) extends RocketSubsystem
     with org.chipsalliance.rocketchip.blocks.devices.usb.CanHavePeripheryUSB
     with sifive.blocks.devices.uart.HasPeripheryUART
     with sifive.blocks.devices.spi.HasPeripherySPIFlash
+    with org.chipsalliance.rocketchip.blocks.devices.montgomery.CanHavePeripheryMontgomery
 {
   // optionally add ROM devices
   // Note that setting BootROMLocated will override the reset_vector for all tiles
