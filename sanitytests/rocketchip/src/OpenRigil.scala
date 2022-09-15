@@ -132,8 +132,8 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   case MontgomeryKey => Some(MontgomeryParams(
     baseAddress = 0x2000,
     width = 32,
-    block = 8, // 8 * 32 = 256, so 256 bit mmm
-    //block = 64, // 64 * 32 = 2048, so 2048 bit mmm
+    //block = 8, // 8 * 32 = 256, so 256 bit mmm
+    block = 64, // 64 * 32 = 2048, so 2048 bit mmm
     //block = 128, // 128 * 32 = 4096, so 4096 bit mmm
     freqDiv = 1,
     addPipe = 1))
