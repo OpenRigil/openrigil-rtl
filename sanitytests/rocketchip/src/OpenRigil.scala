@@ -33,7 +33,6 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   // rocket tile
   case RocketTilesKey => List(RocketTileParams(
       core = RocketCoreParams(
-        useCryptoNIST = true,
         useVM = false,
         fpu = None,
         mulDiv = Some(MulDivParams(mulUnroll = 8))),
