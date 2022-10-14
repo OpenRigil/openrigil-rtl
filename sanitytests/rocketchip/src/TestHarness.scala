@@ -3,6 +3,7 @@ package sanitytests.rocketchip
 import chipsalliance.rocketchip.config.Config
 import chisel3.RawModule
 import firrtl.AnnotationSeq
+import firrtl.{CustomDefaultRegisterEmission, CustomDefaultMemoryEmission, MemoryNoInit}
 import firrtl.options.TargetDirAnnotation
 import firrtl.passes.memlib.{InferReadWriteAnnotation, GenVerilogMemBehaviorModelAnno}
 import firrtl.stage.{FirrtlStage, OutputFileAnnotation, RunFirrtlTransformAnnotation}
@@ -31,6 +32,8 @@ case class TestHarness[M <: RawModule](
           new TopModuleAnnotation(testHarness),
           new ConfigsAnnotation(configs.map(_.getName)),
           InferReadWriteAnnotation,
+          //CustomDefaultMemoryEmission(MemoryNoInit),
+          //CustomDefaultRegisterEmission(useInitAsPreset = true, disableRandomization = true),
           GenVerilogMemBehaviorModelAnno(false),
           RunFirrtlTransformAnnotation(new firrtl.passes.InlineInstances),
           new OutputBaseNameAnnotation("TestHarness")
@@ -41,8 +44,8 @@ case class TestHarness[M <: RawModule](
     val duts = annotations.collect {
       case OutputFileAnnotation(file) => outputDirectory / s"$file.v"
     }
-    val blackbox =
-      os.read.lines(outputDirectory / firrtl.transforms.BlackBoxSourceHelper.defaultFileListName).map(Path(_))
+    //val blackbox =
+    //  os.read.lines(outputDirectory / firrtl.transforms.BlackBoxSourceHelper.defaultFileListName).map(Path(_))
     val verilatorBuildDir = outputDirectory / "build"
     val cmakefilelist = verilatorBuildDir / "CMakeLists.txt"
     os.makeDir(verilatorBuildDir)
@@ -63,8 +66,9 @@ case class TestHarness[M <: RawModule](
     val csrcs = Seq("csrc/emulator.cc", "csrc/SimDTM.cc", "csrc/SimJTAG.cc", "csrc/remote_bitbang.cc")
       .map(resource(_).toString)
       .mkString(" ")
-    val usbbootrom = Seq(Path(s"${resource("vsrc/usbbootrom.rom.v")}"))
-    val vsrcs = (duts ++ blackbox ++ usbbootrom)
+    //val usbbootrom = Seq(Path(s"${resource("vsrc/usbbootrom.rom.v")}"))
+    //val vsrcs = (duts ++ blackbox ++ usbbootrom)
+    val vsrcs = duts
       .filter(f => f.ext == "v" | f.ext == "sv")
       .map(_.toString)
       .mkString(" ")
