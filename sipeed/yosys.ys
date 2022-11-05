@@ -1,0 +1,4 @@
+read_verilog out/VerilatorTest/OpenRigilTestHarness.v
+read_verilog sipeed/openrigil-wrapper-reset.v
+hierarchy -top OpenRigilWrapperReset
+synth_gowin -vout openrigil-uart-wrapper-reset.vg
