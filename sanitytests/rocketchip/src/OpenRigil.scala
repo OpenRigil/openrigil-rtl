@@ -22,7 +22,6 @@ import os._
 // it is required that frequency be multiple of 12000000
 // for USB
 object Const {
-  //val frequency = 60000000
   val frequency = 27000000
 }
 
@@ -32,7 +31,6 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   case XLen => 32
   case MaxHartIdBits => log2Up(site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1)
   // rocket tile
-  case CacheBlockBytes => 8
   case RocketTilesKey => List(RocketTileParams(
       core = RocketCoreParams(
         //useCryptoNIST = true,
@@ -45,8 +43,7 @@ class OpenRigilConfig extends Config ((site, here, up) => {
       btb = None,
       dcache = Some(DCacheParams(
         rowBits = site(SystemBusKey).beatBits,
-        //nSets = 1024, // 64Kb scratchpad
-        nSets = 16, // 64Kb scratchpad
+        nSets = 1024, // 64KB scratchpad
         nWays = 1,
         nTLBSets = 1,
         nTLBWays = 4,
@@ -55,46 +52,25 @@ class OpenRigilConfig extends Config ((site, here, up) => {
         scratch = Some(0x80000000L))),
       icache = Some(ICacheParams(
         rowBits = site(SystemBusKey).beatBits,
-        nSets = 16,
+        nSets = 64,
         nWays = 1,
         nTLBSets = 1,
         nTLBWays = 4,
         blockBytes = site(CacheBlockBytes)))))
   case RocketCrossingKey => List(RocketCrossingParams(
     crossingType = SynchronousCrossing(),
-    master = TileMasterPortParams()
+    master = TileMasterPortParams(),
+    slave = TileSlavePortParams(where = SBUS, blockerCtrlWhere = SBUS),
+    mmioBaseAddressPrefixWhere = SBUS,
   ))
   // Interconnect parameters
   case SystemBusKey => SystemBusParams(
     beatBytes = site(XLen)/8,
-    blockBytes = site(CacheBlockBytes))
-  case ControlBusKey => PeripheryBusParams(
-    beatBytes = site(XLen)/8,
-    blockBytes = site(CacheBlockBytes))
-    //errorDevice = Some(BuiltInErrorDeviceParams(
-    //  errorParams = DevNullParams(List(AddressSet(0x3000, 0xfff)), maxAtomic=site(XLen)/8, maxTransfer=4096))))
-  case PeripheryBusKey => PeripheryBusParams(
-    beatBytes = site(XLen)/8,
     blockBytes = site(CacheBlockBytes),
-    dtsFrequency = Some(Const.frequency)) // 60MHz in our case
-  case MemoryBusKey => MemoryBusParams(
-    beatBytes = site(XLen)/8,
-    blockBytes = site(CacheBlockBytes))
-  case FrontBusKey => FrontBusParams(
-    beatBytes = site(XLen)/8,
-    blockBytes = site(CacheBlockBytes))
-  // IncoherentBusTopology
+    dtsFrequency = Some(Const.frequency)) // 27MHz in our case
+  // JustOneBusTopology
   case TLNetworkTopologyLocated(InSubsystem) => List(
-    JustOneBusTopologyParams(sbus = site(SystemBusKey)),
-    HierarchicalBusTopologyParams(
-      pbus = site(PeripheryBusKey),
-      fbus = site(FrontBusKey),
-      cbus = site(ControlBusKey),
-      xTypes = SubsystemCrossingParams(
-        sbusToCbusXType = site(SbusToCbusXTypeKey),
-        cbusToPbusXType = site(CbusToPbusXTypeKey),
-        fbusToSbusXType = site(FbusToSbusXTypeKey)),
-      driveClocksFromSBus = site(DriveClocksFromSBus)))
+    JustOneBusTopologyParams(sbus = site(SystemBusKey)))
   // ROM
   case BootROMLocated(InSubsystem) =>
     Some(BootROMParams(contentFileName = {
@@ -135,7 +111,7 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   case PeripheryUARTKey => Seq(UARTParams(address = 0x6000, nTxEntries = 8))
   //case PeripherySPIFlashKey => Seq(SPIFlashParams(rAddress = 0x7000, fAddress = 0x60000000))
   //case PeripherySPIKey => Seq(SPIParams(rAddress = 0x7000))
-  //case ExportDebug => DebugAttachParams(protocols = Set(JTAG))
+  case ExportDebug => DebugAttachParams(protocols = Set(JTAG), slaveWhere = SBUS, masterWhere = SBUS) // dummy for removing CBUS/FBUS
   //case MontgomeryKey => Some(MontgomeryParams(
   //  baseAddress = 0x2000,
   //  width = 32,
@@ -147,9 +123,10 @@ class OpenRigilConfig extends Config ((site, here, up) => {
   // Additional device Parameters
   case ClockGateModelFile => Some("/vsrc/EICG_wrapper.v")
   case SubsystemExternalResetVectorKey => false
-  case DebugModuleKey => None//Some(DefaultDebugModuleParams(site(XLen)))
-  case CLINTKey => Some(CLINTParams())
+  case DebugModuleKey => None
+  case CLINTKey => None
   case PLICKey => Some(PLICParams())
+  case PLICAttachKey => PLICAttachParams(slaveWhere = SBUS)
   case TilesLocated(InSubsystem) => 
     LegacyTileFieldHelper(site(RocketTilesKey), site(RocketCrossingKey), RocketTileAttachParams.apply _)
   case DTSModel => "freechips,rocketchip-unknown"
@@ -166,25 +143,23 @@ class OpenRigilSystem(implicit p: Parameters) extends RocketSubsystem
     with CanHaveSlaveAXI4Port
     with org.chipsalliance.rocketchip.blocks.devices.usb.CanHavePeripheryUSB
     with sifive.blocks.devices.uart.HasPeripheryUART
-    //with sifive.blocks.devices.spi.HasPeripherySPIFlash
-    with sifive.blocks.devices.spi.HasPeripherySPI
+    with sifive.blocks.devices.spi.HasPeripherySPIFlash
     with org.chipsalliance.rocketchip.blocks.devices.montgomery.CanHavePeripheryMontgomery
 {
   // optionally add ROM devices
   // Note that setting BootROMLocated will override the reset_vector for all tiles
-  val bootROM  = p(BootROMLocated(location)).map { BootROM.attach(_, this, CBUS) }
-  val maskROMs = p(MaskROMLocated(location)).map { MaskROM.attach(_, this, CBUS) }
+  val bootROM  = p(BootROMLocated(location)).map { BootROM.attach(_, this, SBUS) }
+  val maskROMs = p(MaskROMLocated(location)).map { MaskROM.attach(_, this, SBUS) }
 
   override lazy val module = new OpenRigilSystemModuleImp(this)
 }
 
 class OpenRigilSystemModuleImp[+L <: OpenRigilSystem](_outer: L) extends RocketSubsystemModuleImp(_outer)
-    with HasRTCModuleImp
     with HasExtInterruptsModuleImp
     with DontTouch
     with org.chipsalliance.rocketchip.blocks.devices.usb.CanHavePeripheryUSBModuleImp
     with sifive.blocks.devices.uart.HasPeripheryUARTModuleImp
-    with sifive.blocks.devices.spi.HasPeripherySPIModuleImp
+    with sifive.blocks.devices.spi.HasPeripherySPIFlashModuleImp
 
 
 class OpenRigilTestHarness()(implicit p: Parameters) extends Module {
@@ -200,8 +175,6 @@ class OpenRigilTestHarness()(implicit p: Parameters) extends Module {
 
   dut.dontTouchPorts()
   dut.tieOffInterrupts()
-  ldut.l2_frontend_bus_axi4.foreach(_.tieoff)
-  //Debug.connectDebug(dut.debug, dut.resetctrl, dut.psd, clock, reset.asBool, io.success)
   io.success := 0.U
 
   dut.usb match {
@@ -214,7 +187,7 @@ class OpenRigilTestHarness()(implicit p: Parameters) extends Module {
 
   dut.uart.map(sifive.blocks.devices.uart.UART.loopback(_))
 
-  dut.spi.map { port =>
+  dut.qspi.map { port =>
     port.dq.foreach { dq => dq.i := false.B }
   }
 }
